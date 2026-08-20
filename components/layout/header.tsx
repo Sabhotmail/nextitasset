@@ -23,10 +23,10 @@ export function Header({ userName }: { userName?: string | null }) {
   }
 
   return (
-    <header className="flex h-16 items-center justify-between border-b border-slate-200 bg-white px-6 dark:border-slate-800 dark:bg-slate-950">
+    <header className="flex h-16 items-center justify-between border-b border-slate-200 bg-white px-6 dark:border-slate-700 dark:bg-slate-900">
       <div>
-        <p className="text-sm text-slate-500">ระบบจัดการสินทรัพย์ IT</p>
-        <p className="font-medium">{userName ?? "ผู้ใช้งาน"}</p>
+        <p className="text-sm text-slate-500 dark:text-slate-300">ระบบจัดการสินทรัพย์ IT</p>
+        <p className="font-medium text-slate-900 dark:text-white">{userName ?? "ผู้ใช้งาน"}</p>
       </div>
       <div className="flex items-center gap-2">
         <Button variant="ghost" size="icon" onClick={toggleTheme} aria-label="Toggle theme">

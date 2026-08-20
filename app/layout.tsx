@@ -21,8 +21,15 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="th" className={`${inter.variable} ${notoSansThai.variable} h-full`}>
-      <body className="min-h-full antialiased">
+    <html lang="th" className={`${inter.variable} ${notoSansThai.variable} h-full`} suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem("theme");if(t==="dark"){document.documentElement.classList.add("dark");}else if(t==="light"){document.documentElement.classList.remove("dark");}}catch(e){}})();`,
+          }}
+        />
+      </head>
+      <body className="min-h-full bg-[var(--background)] text-[var(--foreground)] antialiased">
         {children}
         <Toaster richColors position="top-right" />
       </body>

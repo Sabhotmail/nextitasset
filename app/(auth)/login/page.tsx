@@ -35,8 +35,8 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-100 p-6 dark:bg-slate-900">
-      <Card className="w-full max-w-md">
+    <div className="flex min-h-screen items-center justify-center bg-slate-100 p-6 dark:bg-slate-950">
+      <Card className="w-full max-w-md shadow-lg">
         <CardHeader>
           <CardTitle>เข้าสู่ระบบ IT Asset</CardTitle>
           <CardDescription>ระบบจัดการสินทรัพย์ IT และประวัติการเปลี่ยนแปลง</CardDescription>

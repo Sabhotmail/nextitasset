@@ -5,16 +5,20 @@ import { usePathname } from "next/navigation";
 import {
   BarChart3,
   Box,
+  ChevronLeft,
+  ChevronRight,
   Clock3,
   FileUp,
   History,
   LayoutDashboard,
   MapPin,
+  PanelLeftOpen,
   Printer,
   Users,
   Wrench,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useSidebar } from "./sidebar-context";
 
 const sections = [
   {
@@ -52,38 +56,82 @@ const sections = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const { collapsed, mounted, toggleCollapsed, expand } = useSidebar();
 
   return (
-    <aside className="hidden w-64 shrink-0 border-r border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-slate-950 lg:block">
-      <div className="flex h-16 items-center border-b border-slate-200 px-6 dark:border-slate-800">
-        <BarChart3 className="mr-2 h-5 w-5 text-blue-600" />
-        <span className="text-lg font-semibold">IT Asset</span>
+    <aside
+      className={cn(
+        "sticky top-0 hidden h-screen shrink-0 flex-col overflow-hidden border-r border-slate-200 bg-slate-50 transition-all duration-200 dark:border-slate-800 dark:bg-slate-950 lg:flex",
+        collapsed ? "w-16" : "w-64",
+      )}
+    >
+      <div
+        className={cn(
+          "flex h-16 shrink-0 items-center border-b border-slate-200 dark:border-slate-800",
+          collapsed ? "justify-center px-2" : "justify-between px-4",
+        )}
+      >
+        {collapsed ? (
+          <button
+            type="button"
+            onClick={expand}
+            className="flex h-10 w-10 items-center justify-center rounded-lg text-blue-600 hover:bg-slate-200 dark:hover:bg-slate-800"
+            aria-label="ขยายเมนู"
+            title="ขยายเมนู"
+          >
+            <PanelLeftOpen className="h-5 w-5" />
+          </button>
+        ) : (
+          <>
+            <Link href="/dashboard" className="flex items-center gap-2">
+              <BarChart3 className="h-5 w-5 shrink-0 text-blue-600" />
+              <span className="text-lg font-semibold text-slate-900 dark:text-white">IT Asset</span>
+            </Link>
+            {mounted && (
+              <button
+                type="button"
+                onClick={toggleCollapsed}
+                className="rounded-md p-1.5 text-slate-500 hover:bg-slate-200 hover:text-slate-800 dark:hover:bg-slate-800 dark:hover:text-slate-100"
+                aria-label="ย่อเมนู"
+                title="ย่อเมนู"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </button>
+            )}
+          </>
+        )}
       </div>
-      <nav className="space-y-6 p-4">
+
+      <nav className="min-h-0 flex-1 space-y-4 overflow-y-auto p-2">
         {sections.map((section) => (
           <div key={section.title}>
-            <p className="mb-2 px-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
-              {section.title}
-            </p>
+            {!collapsed && (
+              <p className="mb-2 px-2 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                {section.title}
+              </p>
+            )}
             <div className="space-y-1">
               {section.links.map((link) => {
                 const Icon = link.icon;
                 const active =
                   pathname === link.href ||
                   (link.href !== "/dashboard" && pathname.startsWith(link.href));
+
                 return (
                   <Link
                     key={link.href}
                     href={link.href}
+                    title={collapsed ? link.label : undefined}
                     className={cn(
-                      "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors",
+                      "flex items-center rounded-lg py-2 text-sm transition-colors",
+                      collapsed ? "justify-center px-2" : "gap-3 px-3",
                       active
                         ? "bg-blue-600 text-white"
                         : "text-slate-700 hover:bg-slate-200 dark:text-slate-200 dark:hover:bg-slate-900",
                     )}
                   >
-                    <Icon className="h-4 w-4" />
-                    {link.label}
+                    <Icon className="h-4 w-4 shrink-0" />
+                    {!collapsed && <span className="truncate">{link.label}</span>}
                   </Link>
                 );
               })}
@@ -91,6 +139,20 @@ export function Sidebar() {
           </div>
         ))}
       </nav>
+
+      {collapsed && mounted && (
+        <div className="shrink-0 border-t border-slate-200 p-2 dark:border-slate-800">
+          <button
+            type="button"
+            onClick={expand}
+            className="flex w-full items-center justify-center gap-1 rounded-lg p-2 text-sm text-slate-600 hover:bg-slate-200 dark:text-slate-300 dark:hover:bg-slate-800"
+            aria-label="ขยายเมนู"
+            title="ขยายเมนู"
+          >
+            <ChevronRight className="h-4 w-4" />
+          </button>
+        </div>
+      )}
     </aside>
   );
 }

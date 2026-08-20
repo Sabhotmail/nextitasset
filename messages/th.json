@@ -1,0 +1,59 @@
+{
+  "app": {
+    "title": "IT Asset",
+    "description": "ระบบจัดการสินทรัพย์ IT"
+  },
+  "nav": {
+    "dashboard": "แดชบอร์ด",
+    "assets": "สินทรัพย์",
+    "history": "ประวัติ",
+    "employees": "พนักงาน",
+    "locations": "สถานที่",
+    "reports": "รายงาน",
+    "import": "นำเข้า Excel",
+    "export": "ส่งออก Excel",
+    "labels": "ป้าย QR",
+    "newAsset": "เพิ่มสินทรัพย์"
+  },
+  "fields": {
+    "type": "Type",
+    "status": "Status",
+    "brand": "Brand",
+    "model": "Model",
+    "serialNo": "S/N",
+    "monitorSn": "Monitor S/N",
+    "mac": "MAC",
+    "os": "OS",
+    "msOffice": "MS Office",
+    "assetNo": "เลขทรัพย์สิน",
+    "assignedTo": "ผู้ถือครอง",
+    "email": "Email",
+    "acquisitionDate": "วันที่ได้มา",
+    "location": "สถานที่",
+    "assetLocation": "ตำแหน่งย่อย",
+    "remark": "หมายเหตุ",
+    "disposedAt": "วันที่จำหน่าย"
+  },
+  "actions": {
+    "save": "บันทึก",
+    "cancel": "ยกเลิก",
+    "edit": "แก้ไข",
+    "delete": "ลบ",
+    "search": "ค้นหา",
+    "filter": "กรอง",
+    "export": "ส่งออก",
+    "import": "นำเข้า",
+    "move": "โอนย้าย",
+    "restore": "กู้คืน",
+    "print": "พิมพ์"
+  },
+  "events": {
+    "CREATE": "สร้างใหม่",
+    "UPDATE": "แก้ไข",
+    "MOVEMENT": "โอนย้าย",
+    "MAINTENANCE": "บำรุงรักษา",
+    "BULK": "Bulk Action",
+    "IMPORT": "นำเข้า Excel",
+    "DELETE": "ลบ"
+  }
+}

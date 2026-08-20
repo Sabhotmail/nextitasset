@@ -1,0 +1,134 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int           @id @default(autoincrement())
+  username     String        @unique
+  passwordHash String
+  name         String
+  role         String?
+  createdAt    DateTime      @default(now())
+  events       AssetEvent[]
+  maintenances AssetMaintenance[]
+}
+
+model Location {
+  id        Int      @id @default(autoincrement())
+  code      String   @default("")
+  name      String   @unique
+  note      String   @default("")
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  assets    Asset[]
+
+  @@index([name])
+  @@index([active])
+}
+
+model Employee {
+  id         Int      @id @default(autoincrement())
+  empCode    String   @unique
+  title      String   @default("")
+  firstName  String
+  lastName   String
+  department String   @default("")
+  branch     String   @default("")
+  email      String   @default("")
+  active     Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  assets     Asset[]
+
+  @@index([empCode])
+  @@index([department])
+  @@index([branch])
+}
+
+model Asset {
+  id              Int                @id @default(autoincrement())
+  type            String
+  status          String             @default("Active")
+  brand           String?
+  model           String?
+  serialNo        String             @unique
+  monitorSn       String?
+  mac             String?
+  os              String?
+  msOffice        String?
+  assetNo         String?
+  email           String?
+  acquisitionDate DateTime?
+  assetLocation   String?
+  remark          String?
+  disposedAt      DateTime?
+  assignedToId    Int?
+  locationId      Int?
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  assignedTo      Employee?          @relation(fields: [assignedToId], references: [id], onDelete: SetNull)
+  location        Location?          @relation(fields: [locationId], references: [id], onDelete: SetNull)
+  events          AssetEvent[]
+  maintenances    AssetMaintenance[]
+
+  @@index([serialNo])
+  @@index([status])
+  @@index([type])
+  @@index([locationId])
+  @@index([assignedToId])
+  @@index([updatedAt])
+}
+
+model AssetEvent {
+  id         Int      @id @default(autoincrement())
+  assetId    Int
+  eventType  String
+  fieldName  String?
+  oldValue   String?
+  newValue   String?
+  reason     String?
+  note       String?
+  batchId    String?
+  actorId    Int?
+  occurredAt DateTime @default(now())
+  asset      Asset    @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  actor      User?    @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([assetId, occurredAt])
+  @@index([eventType])
+  @@index([batchId])
+  @@index([occurredAt])
+}
+
+model AssetMaintenance {
+  id         Int      @id @default(autoincrement())
+  assetId    Int
+  servicedAt DateTime
+  subject    String
+  detail     String   @default("")
+  cost       Decimal? @db.Decimal(10, 2)
+  actorId    Int?
+  createdAt  DateTime @default(now())
+  asset      Asset    @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  actor      User?    @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([assetId, servicedAt])
+}
+
+model ImportBatch {
+  id          Int      @id @default(autoincrement())
+  batchId     String   @unique
+  fileName    String?
+  totalRows   Int      @default(0)
+  createdRows Int      @default(0)
+  updatedRows Int      @default(0)
+  skippedRows Int      @default(0)
+  actorId     Int?
+  createdAt   DateTime @default(now())
+}

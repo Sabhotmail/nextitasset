@@ -73,6 +73,14 @@ export async function resolveDisplayValue(
   if (fieldName === "acquisitionDate" || fieldName === "disposedAt") {
     return new Date(value).toLocaleDateString("th-TH");
   }
+  if (fieldName === "image") {
+    try {
+      const parsed = JSON.parse(value) as { filePath?: string; fileName?: string };
+      return parsed.filePath ?? parsed.fileName ?? value;
+    } catch {
+      return value;
+    }
+  }
   return value;
 }
 

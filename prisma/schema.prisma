@@ -76,6 +76,7 @@ model Asset {
   location        Location?          @relation(fields: [locationId], references: [id], onDelete: SetNull)
   events          AssetEvent[]
   maintenances    AssetMaintenance[]
+  images          AssetImage[]
 
   @@index([serialNo])
   @@index([status])
@@ -83,6 +84,18 @@ model Asset {
   @@index([locationId])
   @@index([assignedToId])
   @@index([updatedAt])
+}
+
+model AssetImage {
+  id        Int      @id @default(autoincrement())
+  assetId   Int
+  fileName  String
+  filePath  String
+  caption   String   @default("")
+  createdAt DateTime @default(now())
+  asset     Asset    @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  @@index([assetId])
 }
 
 model AssetEvent {

@@ -1,4 +1,13 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  DataTable,
+  DataTableBody,
+  DataTableCell,
+  DataTableEmpty,
+  DataTableHead,
+  DataTableHeaderCell,
+  DataTableRow,
+} from "@/components/ui/data-table";
 import { prisma } from "@/lib/db";
 import { formatDate } from "@/lib/utils";
 
@@ -51,30 +60,41 @@ export default async function AgingReportPage() {
         ))}
       </div>
 
-      <div className="overflow-x-auto rounded-xl border bg-white dark:bg-slate-950">
-        <table className="min-w-full text-sm">
-          <thead className="bg-slate-50 dark:bg-slate-900">
-            <tr>
-              <th className="px-4 py-3 text-left">S/N</th>
-              <th className="px-4 py-3 text-left">Type</th>
-              <th className="px-4 py-3 text-left">วันที่ได้มา</th>
-              <th className="px-4 py-3 text-left">อายุ (ปี)</th>
-              <th className="px-4 py-3 text-left">สถานที่</th>
-            </tr>
-          </thead>
-          <tbody>
-            {assets.map((asset) => (
-              <tr key={asset.id} className="border-t">
-                <td className="px-4 py-3">{asset.serialNo}</td>
-                <td className="px-4 py-3">{asset.type}</td>
-                <td className="px-4 py-3">{formatDate(asset.acquisitionDate)}</td>
-                <td className="px-4 py-3">{ageInYears(asset.acquisitionDate) ?? "—"}</td>
-                <td className="px-4 py-3">{asset.location?.name ?? "—"}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <DataTable>
+        <DataTableHead>
+          <DataTableHeaderCell>S/N</DataTableHeaderCell>
+          <DataTableHeaderCell>Type</DataTableHeaderCell>
+          <DataTableHeaderCell>วันที่ได้มา</DataTableHeaderCell>
+          <DataTableHeaderCell>อายุ (ปี)</DataTableHeaderCell>
+          <DataTableHeaderCell>สถานที่</DataTableHeaderCell>
+        </DataTableHead>
+        <DataTableBody>
+          {assets.length === 0 ? (
+            <DataTableEmpty colSpan={5} message="ไม่พบสินทรัพย์ที่มีวันที่ได้มา" />
+          ) : (
+            assets.map((asset) => (
+              <DataTableRow key={asset.id}>
+                <DataTableCell>
+                  <code className="rounded-md bg-slate-100 px-2 py-0.5 text-xs dark:bg-slate-800">
+                    {asset.serialNo}
+                  </code>
+                </DataTableCell>
+                <DataTableCell>{asset.type}</DataTableCell>
+                <DataTableCell className="text-slate-500 dark:text-slate-400">
+                  {formatDate(asset.acquisitionDate)}
+                </DataTableCell>
+                <DataTableCell>
+                  <span className="font-medium">{ageInYears(asset.acquisitionDate) ?? "—"}</span>
+                  {ageInYears(asset.acquisitionDate) !== null && (
+                    <span className="ml-1 text-slate-500 dark:text-slate-400">ปี</span>
+                  )}
+                </DataTableCell>
+                <DataTableCell>{asset.location?.name ?? "—"}</DataTableCell>
+              </DataTableRow>
+            ))
+          )}
+        </DataTableBody>
+      </DataTable>
     </div>
   );
 }

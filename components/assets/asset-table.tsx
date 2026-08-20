@@ -6,6 +6,15 @@ import { useState } from "react";
 import { bulkAction } from "@/app/actions/assets";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  DataTable,
+  DataTableBody,
+  DataTableCell,
+  DataTableEmpty,
+  DataTableHead,
+  DataTableHeaderCell,
+  DataTableRow,
+} from "@/components/ui/data-table";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
@@ -163,52 +172,60 @@ export function AssetTable({
       </form>
       {message && <p className="text-sm text-green-600">{message}</p>}
 
-      <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-950">
-        <table className="min-w-full text-sm">
-          <thead className="bg-slate-50 dark:bg-slate-900">
-            <tr>
-              <th className="px-4 py-3 text-left">เลือก</th>
-              <th className="px-4 py-3 text-left">S/N</th>
-              <th className="px-4 py-3 text-left">Type</th>
-              <th className="px-4 py-3 text-left">Brand/Model</th>
-              <th className="px-4 py-3 text-left">Status</th>
-              <th className="px-4 py-3 text-left">ผู้ถือครอง</th>
-              <th className="px-4 py-3 text-left">สถานที่</th>
-              <th className="px-4 py-3 text-left">อัปเดต</th>
-            </tr>
-          </thead>
-          <tbody>
-            {assets.map((asset) => (
-              <tr key={asset.id} className="border-t border-slate-100 dark:border-slate-800">
-                <td className="px-4 py-3">
+      <DataTable>
+        <DataTableHead>
+          <DataTableHeaderCell className="w-12">เลือก</DataTableHeaderCell>
+          <DataTableHeaderCell>S/N</DataTableHeaderCell>
+          <DataTableHeaderCell>Type</DataTableHeaderCell>
+          <DataTableHeaderCell>Brand / Model</DataTableHeaderCell>
+          <DataTableHeaderCell>Status</DataTableHeaderCell>
+          <DataTableHeaderCell>ผู้ถือครอง</DataTableHeaderCell>
+          <DataTableHeaderCell>สถานที่</DataTableHeaderCell>
+          <DataTableHeaderCell>อัปเดต</DataTableHeaderCell>
+        </DataTableHead>
+        <DataTableBody>
+          {assets.length === 0 ? (
+            <DataTableEmpty colSpan={8} message="ไม่พบสินทรัพย์" />
+          ) : (
+            assets.map((asset) => (
+              <DataTableRow key={asset.id}>
+                <DataTableCell>
                   <input
                     type="checkbox"
                     checked={selected.includes(asset.id)}
                     onChange={() => toggle(asset.id)}
+                    className="rounded border-slate-300"
                   />
-                </td>
-                <td className="px-4 py-3">
-                  <Link href={`/assets/${asset.id}`} className="font-medium text-blue-600 hover:underline">
-                    {asset.serialNo}
+                </DataTableCell>
+                <DataTableCell>
+                  <Link
+                    href={`/assets/${asset.id}`}
+                    className="font-medium text-blue-600 hover:underline dark:text-blue-400"
+                  >
+                    <code className="rounded-md bg-slate-100 px-2 py-0.5 text-xs dark:bg-slate-800">
+                      {asset.serialNo}
+                    </code>
                   </Link>
-                </td>
-                <td className="px-4 py-3">{asset.type}</td>
-                <td className="px-4 py-3">
-                  {asset.brand} {asset.model}
-                </td>
-                <td className="px-4 py-3">
+                </DataTableCell>
+                <DataTableCell>{asset.type}</DataTableCell>
+                <DataTableCell>
+                  {[asset.brand, asset.model].filter(Boolean).join(" ") || "—"}
+                </DataTableCell>
+                <DataTableCell>
                   <Badge tone={asset.status}>{asset.status}</Badge>
-                </td>
-                <td className="px-4 py-3">
+                </DataTableCell>
+                <DataTableCell>
                   {asset.assignedTo ? employeeName(asset.assignedTo) : "—"}
-                </td>
-                <td className="px-4 py-3">{asset.location?.name ?? "—"}</td>
-                <td className="px-4 py-3">{formatDate(asset.updatedAt)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+                </DataTableCell>
+                <DataTableCell>{asset.location?.name ?? "—"}</DataTableCell>
+                <DataTableCell className="text-slate-500 dark:text-slate-400">
+                  {formatDate(asset.updatedAt)}
+                </DataTableCell>
+              </DataTableRow>
+            ))
+          )}
+        </DataTableBody>
+      </DataTable>
     </div>
   );
 }

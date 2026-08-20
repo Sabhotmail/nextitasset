@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { deleteAssetAction, restoreAssetAction } from "@/app/actions/assets";
+import { AssetImageGallery } from "@/components/assets/asset-image-gallery";
 import { SnapshotViewer } from "@/components/assets/snapshot-viewer";
 import { MaintenancePanel } from "@/components/assets/maintenance-panel";
 import { Badge } from "@/components/ui/badge";
@@ -36,6 +37,7 @@ export default async function AssetDetailPage({
         take: 50,
       },
       maintenances: { include: { actor: true }, orderBy: { servicedAt: "desc" } },
+      images: { orderBy: { createdAt: "desc" } },
     },
   });
 
@@ -103,7 +105,9 @@ export default async function AssetDetailPage({
       </div>
 
       {tab === "overview" && (
-        <Card>
+        <div className="space-y-6">
+          <AssetImageGallery assetId={asset.id} images={asset.images} canEdit={!isDisposed} />
+          <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               ภาพรวม <Badge tone={asset.status}>{asset.status}</Badge>
@@ -134,6 +138,7 @@ export default async function AssetDetailPage({
             ))}
           </CardContent>
         </Card>
+        </div>
       )}
 
       {tab === "history" && <Timeline events={asset.events} />}

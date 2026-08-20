@@ -24,6 +24,8 @@ import {
   movementFormSchema,
   parseOptionalDate,
 } from "@/lib/validators";
+import { saveImagesFromForm } from "@/app/actions/asset-images";
+import { deleteAllAssetImages } from "@/lib/uploads/asset-images";
 
 export type ActionState = {
   errors?: Record<string, string[]>;
@@ -95,6 +97,7 @@ export async function createAssetAction(
     await validateMacUnique(data.mac ?? null);
 
     const asset = await prisma.asset.create({ data });
+    await saveImagesFromForm(asset.id, formData, actorId);
     await recordCreateEvent(asset, actorId);
     revalidatePath("/assets");
     redirect(`/assets/${asset.id}`);
@@ -132,6 +135,7 @@ export async function updateAssetAction(
 
     const before = assetToSnapshot(existing);
     const asset = await prisma.asset.update({ where: { id: assetId }, data });
+    await saveImagesFromForm(assetId, formData, actorId);
     const after = assetToSnapshot(asset);
     await recordUpdateEvents(assetId, before, after, actorId);
 
@@ -146,6 +150,7 @@ export async function updateAssetAction(
 export async function deleteAssetAction(assetId: number) {
   const actorId = await requireUserId();
   const asset = await prisma.asset.findUniqueOrThrow({ where: { id: assetId } });
+  const images = await prisma.assetImage.findMany({ where: { assetId } });
   await recordAssetEvent({
     assetId,
     eventType: "DELETE",
@@ -153,6 +158,10 @@ export async function deleteAssetAction(assetId: number) {
     oldValue: JSON.stringify(assetToSnapshot(asset)),
     actorId,
   });
+  await deleteAllAssetImages(
+    assetId,
+    images.map((image) => image.filePath),
+  );
   await prisma.asset.delete({ where: { id: assetId } });
   revalidatePath("/assets");
   redirect("/assets");

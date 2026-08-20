@@ -148,6 +148,11 @@ export function AssetForm({
         <Input name="assetLocation" defaultValue={initial?.assetLocation ?? ""} />
       </div>
       <div className="md:col-span-2">
+        <Label>รูปภาพ</Label>
+        <Input name="images" type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple />
+        <p className="mt-1 text-xs text-slate-500">เลือกได้หลายรูป — JPG, PNG, WEBP, GIF สูงสุด 5 MB ต่อไฟล์</p>
+      </div>
+      <div className="md:col-span-2">
         <Label>{th.fields.remark}</Label>
         <Textarea name="remark" defaultValue={initial?.remark ?? ""} />
       </div>

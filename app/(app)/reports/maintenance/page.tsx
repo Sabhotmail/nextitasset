@@ -1,4 +1,12 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  DataTable,
+  DataTableBody,
+  DataTableCell,
+  DataTableEmpty,
+  DataTableHead,
+  DataTableHeaderCell,
+  DataTableRow,
+} from "@/components/ui/data-table";
 import { prisma } from "@/lib/db";
 import { formatCurrency, formatDate } from "@/lib/utils";
 
@@ -22,30 +30,38 @@ export default async function MaintenanceReportPage() {
         <h1 className="text-2xl font-bold">รายงานค่าบำรุงรักษา</h1>
         <p className="text-slate-500">รายการล่าสุด 100 รายการ · รวม {formatCurrency(total)}</p>
       </div>
-      <div className="overflow-x-auto rounded-xl border bg-white dark:bg-slate-950">
-        <table className="min-w-full text-sm">
-          <thead className="bg-slate-50 dark:bg-slate-900">
-            <tr>
-              <th className="px-4 py-3 text-left">วันที่</th>
-              <th className="px-4 py-3 text-left">S/N</th>
-              <th className="px-4 py-3 text-left">หัวข้อ</th>
-              <th className="px-4 py-3 text-left">ค่าใช้จ่าย</th>
-              <th className="px-4 py-3 text-left">ผู้บันทึก</th>
-            </tr>
-          </thead>
-          <tbody>
-            {records.map((record) => (
-              <tr key={record.id} className="border-t">
-                <td className="px-4 py-3">{formatDate(record.servicedAt)}</td>
-                <td className="px-4 py-3">{record.asset.serialNo}</td>
-                <td className="px-4 py-3">{record.subject}</td>
-                <td className="px-4 py-3">{formatCurrency(record.cost?.toString())}</td>
-                <td className="px-4 py-3">{record.actor?.name ?? "—"}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <DataTable>
+        <DataTableHead>
+          <DataTableHeaderCell>วันที่</DataTableHeaderCell>
+          <DataTableHeaderCell>S/N</DataTableHeaderCell>
+          <DataTableHeaderCell>หัวข้อ</DataTableHeaderCell>
+          <DataTableHeaderCell>ค่าใช้จ่าย</DataTableHeaderCell>
+          <DataTableHeaderCell>ผู้บันทึก</DataTableHeaderCell>
+        </DataTableHead>
+        <DataTableBody>
+          {records.length === 0 ? (
+            <DataTableEmpty colSpan={5} message="ยังไม่มีข้อมูลบำรุงรักษา" />
+          ) : (
+            records.map((record) => (
+              <DataTableRow key={record.id}>
+                <DataTableCell className="text-slate-500 dark:text-slate-400">
+                  {formatDate(record.servicedAt)}
+                </DataTableCell>
+                <DataTableCell>
+                  <code className="rounded-md bg-slate-100 px-2 py-0.5 text-xs dark:bg-slate-800">
+                    {record.asset.serialNo}
+                  </code>
+                </DataTableCell>
+                <DataTableCell>{record.subject}</DataTableCell>
+                <DataTableCell className="font-medium">
+                  {formatCurrency(record.cost?.toString())}
+                </DataTableCell>
+                <DataTableCell>{record.actor?.name ?? "—"}</DataTableCell>
+              </DataTableRow>
+            ))
+          )}
+        </DataTableBody>
+      </DataTable>
     </div>
   );
 }

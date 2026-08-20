@@ -32,7 +32,8 @@
     "location": "สถานที่",
     "assetLocation": "ตำแหน่งย่อย",
     "remark": "หมายเหตุ",
-    "disposedAt": "วันที่จำหน่าย"
+    "disposedAt": "วันที่จำหน่าย",
+    "image": "รูปภาพ"
   },
   "actions": {
     "save": "บันทึก",
